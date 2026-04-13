@@ -63,7 +63,7 @@ Specific taste profile used for comparison:
 flowchart LR
     A[Input: User Preferences\nfavorite_genre, favorite_mood,\ntarget_energy, likes_acoustic] --> B[Load Songs\nfrom songs.csv]
     B --> C[Process Loop\nscore each song]
-    C --> D[Scoring Logic\n+2.0 genre match\n+1.0 mood match\n+energy similarity points\n+0.5 acoustic alignment]
+    C --> D[Scoring Logic\n+1.0 genre match\n+1.0 mood match\n+energy similarity points\n+0.5 acoustic alignment]
     D --> E[Collect Results\nsong + score + explanation]
     E --> F[Sort by Score\nhighest to lowest]
     F --> G[Output\nTop K recommendations]
@@ -78,7 +78,7 @@ For each song in the CSV, compute:
 - If song mood == favorite_mood, add +1.0
 - Add energy similarity points:
   - `energy_similarity = max(0.0, 1.0 - abs(song_energy - target_energy))`
-  - `energy_points = 2.0 * energy_similarity`
+  - `energy_points = 4.0 * energy_similarity`
   - Add `energy_points` to score
 - If acoustic preference aligns (`likes_acoustic` with acousticness >= 0.5, or not likes_acoustic with acousticness < 0.5), add +0.5
 - Sort all songs by final score (descending)
@@ -86,11 +86,14 @@ For each song in the CSV, compute:
 
 ### Potential Biases (Expected)
 
-- This system may over-prioritize genre because genre has a fixed +2.0 bonus, which can push down songs that match mood and energy well but use a different genre label.
+- This system may over-prioritize energy because energy now has the largest weight, which can push up songs with similar energy even when genre fit is weaker.
 - The acoustic threshold (0.5) is a hard cutoff and can be overly simplistic for nuanced taste.
 - With a small catalog, results may repeat similar songs and reduce diversity.
 ---
 ![alt text](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
 
 ## Getting Started
 
