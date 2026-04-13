@@ -12,6 +12,8 @@ Your goal is to:
 - Reflect on how this mirrors real world AI recommenders
 
 Replace this paragraph with your own summary of what your version does.
+Real-world recommenders usually combine many signals at scale: content signals from the song itself (mood, energy, tempo), behavior signals from millions of interactions (likes, skips, replays), and ranking logic that balances relevance with diversity. This classroom version prioritizes transparent, content-based matching first. It compares each song to a user profile, gives higher scores to songs with closer energy and stronger mood/genre alignment, and then ranks the catalog so the top results match the listener's current vibe.
+
 
 ---
 
@@ -28,8 +30,67 @@ Some prompts to answer:
 - How do you choose which songs to recommend
 
 You can include a simple diagram or bullet list if helpful.
+The recommender treats each song as a set of features and compares those features to a user's preferences.
 
+Song features used in this simulation:
+- id
+- title
+- artist
+- genre
+- mood
+- energy
+- tempo_bpm
+- valence
+- danceability
+- acousticness
+
+UserProfile features used in this simulation:
+- favorite_genre
+- favorite_mood
+- target_energy
+- likes_acoustic
+
+Specific taste profile used for comparison:
+- Listener type: calm late-night focus listener
+- Preferred genre: lofi
+- Preferred mood: chill
+- Target energy: 0.40
+- Acoustic preference: likes acoustic sounds
+
+### Data Flow (Mermaid)
+
+```mermaid
+flowchart LR
+    A[Input: User Preferences\nfavorite_genre, favorite_mood,\ntarget_energy, likes_acoustic] --> B[Load Songs\nfrom songs.csv]
+    B --> C[Process Loop\nscore each song]
+    C --> D[Scoring Logic\n+2.0 genre match\n+1.0 mood match\n+energy similarity points\n+0.5 acoustic alignment]
+    D --> E[Collect Results\nsong + score + explanation]
+    E --> F[Sort by Score\nhighest to lowest]
+    F --> G[Output\nTop K recommendations]
+```
+
+### Finalized Algorithm Recipe
+
+For each song in the CSV, compute:
+
+- Start with score = 0.0
+- If song genre == favorite_genre, add +2.0
+- If song mood == favorite_mood, add +1.0
+- Add energy similarity points:
+  - `energy_similarity = max(0.0, 1.0 - abs(song_energy - target_energy))`
+  - `energy_points = 2.0 * energy_similarity`
+  - Add `energy_points` to score
+- If acoustic preference aligns (`likes_acoustic` with acousticness >= 0.5, or not likes_acoustic with acousticness < 0.5), add +0.5
+- Sort all songs by final score (descending)
+- Return top-k songs
+
+### Potential Biases (Expected)
+
+- This system may over-prioritize genre because genre has a fixed +2.0 bonus, which can push down songs that match mood and energy well but use a different genre label.
+- The acoustic threshold (0.5) is a hard cutoff and can be overly simplistic for nuanced taste.
+- With a small catalog, results may repeat similar songs and reduce diversity.
 ---
+![alt text](image.png)
 
 ## Getting Started
 
