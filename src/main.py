@@ -13,32 +13,55 @@ from recommender import load_songs, recommend_songs
 
 
 def main() -> None:
-    songs = load_songs("data/songs.csv") 
+    songs = load_songs("data/songs.csv")
     print(f"Loaded songs: {len(songs)}")
 
-    # Specific taste profile: calm late-night focus listener
-    user_prefs = {
-        "favorite_genre": "lofi",
-        "favorite_mood": "chill",
-        "target_energy": 0.4,
-        "likes_acoustic": True,
-    }
+    profiles = [
+        (
+            "High-Energy Pop",
+            {
+                "favorite_genre": "pop",
+                "favorite_mood": "happy",
+                "target_energy": 0.9,
+                "likes_acoustic": False,
+            },
+        ),
+        (
+            "Chill Lofi",
+            {
+                "favorite_genre": "lofi",
+                "favorite_mood": "chill",
+                "target_energy": 0.4,
+                "likes_acoustic": True,
+            },
+        ),
+        (
+            "Deep Intense Rock",
+            {
+                "favorite_genre": "rock",
+                "favorite_mood": "intense",
+                "target_energy": 0.85,
+                "likes_acoustic": False,
+            },
+        ),
+    ]
 
-    recommendations = recommend_songs(user_prefs, songs, k=5)
+    for profile_name, user_prefs in profiles:
+        recommendations = recommend_songs(user_prefs, songs, k=5)
 
-    print("\nTop recommendations\n")
-    print("=" * 60)
-    for index, rec in enumerate(recommendations, start=1):
-        # recommend_songs returns: (song, score, explanation)
-        song, score, explanation = rec
-        reasons = [reason.strip() for reason in explanation.split(";") if reason.strip()]
+        print(f"\n{profile_name}")
+        print("=" * 60)
+        for index, rec in enumerate(recommendations, start=1):
+            # recommend_songs returns: (song, score, explanation)
+            song, score, explanation = rec
+            reasons = [reason.strip() for reason in explanation.split(";") if reason.strip()]
 
-        print(f"{index}. {song['title']} — {song['artist']}")
-        print(f"   Final score: {score:.2f}")
-        print("   Reasons:")
-        for reason in reasons:
-            print(f"   - {reason}")
-        print("-" * 60)
+            print(f"{index}. {song['title']} — {song['artist']}")
+            print(f"   Final score: {score:.2f}")
+            print("   Reasons:")
+            for reason in reasons:
+                print(f"   - {reason}")
+            print("-" * 60)
 
 
 if __name__ == "__main__":

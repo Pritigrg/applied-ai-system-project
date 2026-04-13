@@ -123,19 +123,18 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     song_energy = float(song.get("energy", 0.5))
     song_acousticness = float(song.get("acousticness", 0.0))
 
-    # Finalized recipe baseline:
-    # +2.0 for genre match, +1.0 for mood match,
-    # plus similarity points from energy distance.
+    # Sensitivity experiment (weight shift):
+    # genre weight halved, energy weight doubled.
     if favorite_genre and song_genre == favorite_genre:
-        score += 2.0
-        reasons.append("genre match (+2.0)")
+        score += 1.0
+        reasons.append("genre match (+1.0)")
 
     if favorite_mood and song_mood == favorite_mood:
         score += 1.0
         reasons.append("mood match (+1.0)")
 
     energy_similarity = max(0.0, 1.0 - abs(song_energy - target_energy))
-    energy_points = 2.0 * energy_similarity
+    energy_points = 4.0 * energy_similarity
     score += energy_points
     reasons.append(f"energy similarity (+{energy_points:.2f})")
 
