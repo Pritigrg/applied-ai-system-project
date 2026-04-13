@@ -12,7 +12,9 @@ Your goal is to:
 - Reflect on how this mirrors real world AI recommenders
 
 Replace this paragraph with your own summary of what your version does.
-Real-world recommenders usually combine many signals at scale: content signals from the song itself (mood, energy, tempo), behavior signals from millions of interactions (likes, skips, replays), and ranking logic that balances relevance with diversity. This classroom version prioritizes transparent, content-based matching first. It compares each song to a user profile, gives higher scores to songs with closer energy and stronger mood/genre alignment, and then ranks the catalog so the top results match the listener's current vibe.
+This version builds a transparent, content-based music recommender using a small song catalog.
+It compares each song to a user taste profile using genre, mood, energy, and acoustic preference.
+Songs are scored, sorted, and returned as top-k recommendations with short explanations.
 
 
 ---
@@ -30,7 +32,7 @@ Some prompts to answer:
 - How do you choose which songs to recommend
 
 You can include a simple diagram or bullet list if helpful.
-The recommender treats each song as a set of features and compares those features to a user's preferences.
+->The recommender treats each song as a set of features and compares those features to a user's preferences.
 
 Song features used in this simulation:
 - id
@@ -74,7 +76,7 @@ flowchart LR
 For each song in the CSV, compute:
 
 - Start with score = 0.0
-- If song genre == favorite_genre, add +2.0
+- If song genre == favorite_genre, add +1.0
 - If song mood == favorite_mood, add +1.0
 - Add energy similarity points:
   - `energy_similarity = max(0.0, 1.0 - abs(song_energy - target_energy))`
@@ -90,10 +92,7 @@ For each song in the CSV, compute:
 - The acoustic threshold (0.5) is a hard cutoff and can be overly simplistic for nuanced taste.
 - With a small catalog, results may repeat similar songs and reduce diversity.
 ---
-![alt text](image.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
-![alt text](image-3.png)
+
 
 ## Getting Started
 
@@ -137,7 +136,23 @@ Use this section to document the experiments you ran. For example:
 - What happened when you changed the weight on genre from 2.0 to 0.5
 - What happened when you added tempo or valence to the score
 - How did your system behave for different types of users
+I tested multiple user profiles and compared the top 5 recommendations.
+Profiles tested: High-Energy Pop, Chill Lofi, and Deep Intense Rock.
 
+I also ran a weight-shift experiment.
+I reduced genre weight and increased energy weight.
+After this change, energy had a much stronger effect on ranking.
+Songs with similar energy moved up even when genre match was weaker.
+
+For behavior checks, I compared profile pairs.
+Chill Lofi and Deep Intense Rock gave the clearest contrast.
+Profiles with high target energy often shared some top songs.
+This showed the scoring is sensitive to weight choices.
+
+![alt text](image.png)
+![alt text](image-1.png)
+![alt text](image-2.png)
+![alt text](image-3.png)
 ---
 
 ## Limitations and Risks
@@ -149,7 +164,10 @@ Examples:
 - It only works on a tiny catalog
 - It does not understand lyrics or language
 - It might over favor one genre or mood
-
+#####
+- It uses a small catalog, so recommendations are limited.
+- It does not use lyrics, language, or listening history.
+- Energy has high weight, so results can favor similar-energy songs.
 You will go deeper on this in your model card.
 
 ---
@@ -164,7 +182,9 @@ Write 1 to 2 paragraphs here about what you learned:
 
 - about how recommenders turn data into predictions
 - about where bias or unfairness could show up in systems like this
+I learned that recommenders turn preferences into numbers, then rank items by score. In this project, small changes to feature weights changed the top results a lot. That made it clear how important scoring design is.
 
+I also learned where bias can appear. A small dataset limits who gets good recommendations, and high energy weight can over-favor one style of song. Even simple rules can feel unfair when some user tastes are underrepresented.
 
 ---
 
@@ -179,7 +199,7 @@ Combines reflection and model card framing from the Module 3 guidance. :contentR
 
 Give your recommender a name, for example:
 
-> VibeFinder 1.0
+> VibeMatch Classroom Recommender v1.
 
 ---
 
@@ -203,7 +223,12 @@ Describe your scoring logic in plain language.
 - How does it turn those into a number
 
 Try to avoid code in this section, treat it like an explanation to a non programmer.
-
+Each song has genre, mood, energy, and acousticness.
+The user profile has favorite genre, favorite mood, target energy, and acoustic preference.
+The model adds points for genre and mood matches.
+It adds more points when song energy is close to target energy.
+It adds a small bonus if acoustic preference aligns.
+Then songs are sorted by score and top songs are returned.
 ---
 
 ## 4. Data
@@ -214,6 +239,13 @@ Describe your dataset.
 - Did you add or remove any songs
 - What kinds of genres or moods are represented
 - Whose taste does this data mostly reflect
+
+The dataset has 18 songs in `data/songs.csv`.
+It originally had 10 songs, and I added 8 more songs.
+It includes genres like lofi, pop, rock, jazz, classical, reggae, indie pop, and ambient.
+It includes moods like chill, happy, intense, calm, reflective, nostalgic, focused, and relaxed.
+This mostly reflects broad classroom-style listening tastes, not very niche preferences.
+
 
 ---
 
@@ -226,6 +258,11 @@ You can think about:
 - Particular user profiles it served well
 - Simplicity or transparency benefits
 
+The model works well for clear user profiles.
+It performs well for High-Energy Pop and Chill Lofi profiles.
+Energy and mood matching often feel correct.
+The results are easy to explain because the score is transparent.
+
 ---
 
 ## 6. Limitations and Bias
@@ -237,6 +274,13 @@ Some prompts:
 - Does it treat all users as if they have the same taste shape
 - Is it biased toward high energy or one genre by default
 - How could this be unfair if used in a real product
+
+This recommender is simple and transparent, but it has important limits.
+It does not consider lyrics, artist history, or listening context.
+Some genres and moods are underrepresented because the dataset is small.
+Energy has high weight, so recommendations can become repetitive.
+Genre and mood need exact text matches, which can hurt users with uncommon labels.
+The acoustic rule uses a hard cutoff and misses nuance near the threshold.
 
 ---
 
@@ -251,6 +295,13 @@ Examples:
 
 You do not need a numeric metric, but if you used one, explain what it measures.
 
+I tested High-Energy Pop, Chill Lofi, and Deep Intense Rock profiles.
+I checked whether the top songs matched each profile's vibe.
+I also checked if the explanation text matched scoring behavior.
+I compared profile outputs to see overlap and differences.
+The biggest surprise was how strongly energy drives ranking after the weight change.
+I also used unit tests for ranking order and non-empty explanations.
+
 ---
 
 ## 8. Future Work
@@ -263,6 +314,12 @@ Examples:
 - Balance diversity of songs instead of always picking the closest match
 - Use more features, like tempo ranges or lyric themes
 
+I would add more songs to improve coverage.
+I would add soft matching for similar genres and moods.
+I would include more features like tempo, danceability, and valence.
+I would improve diversity so top results are less repetitive.
+I would make explanations even clearer and more personal.
+
 ---
 
 ## 9. Personal Reflection
@@ -272,4 +329,9 @@ A few sentences about what you learned:
 - What surprised you about how your system behaved
 - How did building this change how you think about real music recommenders
 - Where do you think human judgment still matters, even if the model seems "smart"
+
+I learned that small weight changes can shift recommendations a lot.
+I learned that transparent scoring makes debugging easier.
+I was surprised by how quickly energy can dominate results.
+This project made me think more about fairness and diversity in real apps.
 
