@@ -1,10 +1,10 @@
-# EmotionLift — Voice-Driven Music Therapy
+# EmotionLift: Emotion-Based Music Recommender
 
 ---
 
 ## Title and Summary
 
-**EmotionLift** is a voice-driven music therapy system. You speak how you're feeling; two AI models detect your emotion and find the right songs to help.
+**EmotionLift** is a voice-driven music recommender system. You speak how you're feeling; two AI models detect your emotion and find the right songs to help.
 
 The system works in three stages:
 1. **Speech-to-text** — `openai/whisper-base` transcribes what you say into text
