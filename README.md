@@ -2,6 +2,14 @@
 
 ---
 
+## Original Project (Modules 1–3)
+
+**VibeMatch Classroom Recommender v1** was a content-based music recommendation system built in Modules 1–3. Its original goal was to suggest songs from an 18-song class dataset by matching structured user input — favorite genre, mood, energy level, and acoustic preference — to song features using a weighted scoring formula. Every recommendation included a plain-English explanation of why each song ranked where it did, making the scoring logic fully transparent and auditable.
+
+EmotionLift extends that foundation by replacing the structured 4-question input with voice-driven emotion detection, so users no longer need to know or label their own preferences — the system infers them automatically from speech.
+
+---
+
 ## Title and Summary
 
 **EmotionLift**  a voice-driven music recommendation system that detects emotion from speech and recommends songs matched to how the user feels.
