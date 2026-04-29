@@ -4,9 +4,9 @@
 
 ## Original Project (Modules 1–3)
 
-**VibeMatch Classroom Recommender v1** was a content-based music recommendation system built in Modules 1–3. Its original goal was to suggest songs from an 18-song class dataset by matching structured user input — favorite genre, mood, energy level, and acoustic preference — to song features using a weighted scoring formula. Every recommendation included a plain-English explanation of why each song ranked where it did, making the scoring logic fully transparent and auditable.
+**VibeMatch Classroom Recommender v1** was a content-based music recommendation system. Its original goal was to suggest songs from an 18-song class dataset by matching structured user input — favorite genre, mood, energy level, and acoustic preference — to song features using a weighted scoring formula. Every recommendation included a plain-English explanation of why each song ranked where it did, making the scoring logic fully transparent and auditable.
 
-EmotionLift extends that foundation by replacing the structured 4-question input with voice-driven emotion detection, so users no longer need to know or label their own preferences — the system infers them automatically from speech.
+EmotionLift extends that foundation by integrating two pretrained, fine-tuned AI models — `openai/whisper-base` for speech recognition and `j-hartmann/emotion-english-distilroberta-base` for emotion classification — replacing the structured 4-question input entirely. Users no longer need to know or label their own preferences; the system infers them automatically from natural speech, demonstrating how specialized fine-tuned models can be layered on top of an existing rule-based system to add real, tangible value.
 
 ---
 
@@ -259,8 +259,6 @@ The system uses four complementary reliability mechanisms:
 | `test_recommender.py` | `test_recommend_returns_songs_sorted_by_score` | Highest-scored song is ranked first |
 | `test_recommender.py` | `test_explain_recommendation_returns_non_empty_string` | Explanation text is never empty |
 
-All model and audio dependencies are fully mocked — no download or audio device needed.
-
 **Run tests yourself:**
 ```bash
 source .venv/bin/activate
@@ -309,18 +307,7 @@ Error handling covers two known failure modes:
 
 ### 4. Human Evaluation
 
-**Try it yourself in 3 steps:**
-
-```bash
-streamlit run src/app.py
-# Open http://localhost:8501
-```
-
-1. Press **Record** and say something like *"I feel really anxious about my exam"* or *"I'm so happy today"*
-2. Check whether the detected emotion label and confidence % match what you actually felt
-3. Listen to the first song — does it feel like a good match for that emotion?
-
-Two questions to judge quality:
+I check this with two thing in mind:
 - **Emotion accuracy** — does the label (e.g. `fear · 87%`) match what you said?
 - **Recommendation fit** — do the songs feel right for that emotion and energy level?
 
@@ -331,15 +318,14 @@ Each song shows its genre, mood, and match % so you can see *why* it was recomme
 ## Reflection
 
 **What this project taught about AI:**
-The biggest lesson was that composing two narrow, specialized models produces something more useful than either model alone. Whisper does one thing — transcription. The emotion classifier does one thing — label text. Neither knows anything about music. But connected through the `EMOTION_TO_PREFS` mapping and the recommender, they turn a spoken feeling into a curated playlist. 
-The second lesson was about transparency. The rule-based recommender and the explicit `EMOTION_TO_PREFS` table mean every output can be traced back to a specific decision. If the system recommends Fix You to a sad user, the reason is visible: energy 0.25 exactly matches the target. That kind of auditability matters in a music recommendation context.
+The first lesson was that composing two narrow, specialized models produces something more useful than either model alone. Whisper does one thing — transcription. The emotion classifier does one thing — label text. Neither knows anything about music. But connected through the `EMOTION_TO_PREFS` mapping and the recommender, they turn a spoken feeling into a curated playlist. 
+The second lesson was about transparency. The rule-based recommender and the explicit `EMOTION_TO_PREFS` table mean every output can be traced back to a specific decision. If the system recommends Fix You to a sad user, the reason is visible: energy 0.25 exactly matches the target. That kind of auditability matters in a music recommendation context.But it would definitely need some sophistication. So, More into explainable AI
 
 **What this project taught about recommender systems:**
-Small changes to feature weights produce large changes in output. The energy weight (up to +4.0) dominates the score — a song with exactly the right energy will almost always appear near the top, even without matching the genre or mood. That illustrates how algorithmic bias enters quietly: not from intent, but from a weight choice that turns out to favour one dimension over others.
+Small changes to feature weights produce large changes in output. For now in my project the energy weight (up to +4.0) dominates the score — a song with exactly the right energy will almost always appear near the top, even without matching the genre or mood. That illustrates how algorithmic bias enters quietly: not from intent, but from a weight choice that turns out to favour one dimension over others.
 
 **What would come next:**
-The most natural extension is testing whether the emotion classifier actually helps users find better music than a simple keyword form would. A/B testing both inputs and asking users to rate the recommendations would answer that question with real data rather than intuition. Adding image-based emotion input (detecting emotion from a photo or facial expression) is a second direction — the recommender and mapping layer would need no changes at all.
-
+The next thing is sometimes even when we say I am happy but our tone could be different we could be sad but audio since we transcribe it in text. So, undertsanding the emotion part well, fine tunning or exploring more model on how we can detect it better.
 **AI Collaboration:**
 I used Claude Code throughout the project — for designing the pipeline architecture, writing tests, debugging the HuggingFace pipeline output shape normalization in `therapy.py`, and iterating on the Streamlit UI layout.
 
@@ -357,8 +343,8 @@ I used Claude Code throughout the project — for designing the pipeline archite
 
 **What this project says about me as an AI engineer:**
 
-EmotionLift is a voice-driven, multimodal AI system that integrates speech recognition, supervised emotion classification, and a transparent rule-based recommender to deliver emotion-matched music recommendations.
+I like building things that actually work for people. For this project, I didn't train any models from scratch — I used pretrained models that already knew how to do speech recognition and emotion detection, and I connected them together to solve a real problem. 
 
-This project reflects my approach to AI as a combination of specialized models and interpretable system design. I focus on using learned models where they add real value — such as understanding speech and emotion — while keeping downstream decision-making transparent, controllable, and easy to reason about.
+I also care about being able to explain what the system is doing. The recommendation logic is just math — you can read it line by line and see exactly why a song ranked where it did. I think that matters, especially when you're making something that affects how a person feels.
 
-It also highlights my emphasis on building reliable, reproducible systems, with clear evaluation signals (confidence scores per song and per emotion detection) and modular components that can be improved independently. I aim to design AI systems that are not only effective, but also trustworthy and grounded in real-world use cases.
+This project showed me that you don't need to build everything yourself to build something meaningful. Knowing how to use pretrained models, compose them into a pipeline, and keep the output honest and interpretable.
