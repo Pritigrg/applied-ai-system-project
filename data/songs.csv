@@ -1,19 +1,23 @@
-id,title,artist,genre,mood,energy,tempo_bpm,valence,danceability,acousticness
-1,Sunrise City,Neon Echo,pop,happy,0.82,118,0.84,0.79,0.18
-2,Midnight Coding,LoRoom,lofi,chill,0.42,78,0.56,0.62,0.71
-3,Storm Runner,Voltline,rock,intense,0.91,152,0.48,0.66,0.10
-4,Library Rain,Paper Lanterns,lofi,chill,0.35,72,0.60,0.58,0.86
-5,Gym Hero,Max Pulse,pop,intense,0.93,132,0.77,0.88,0.05
-6,Spacewalk Thoughts,Orbit Bloom,ambient,chill,0.28,60,0.65,0.41,0.92
-7,Coffee Shop Stories,Slow Stereo,jazz,relaxed,0.37,90,0.71,0.54,0.89
-8,Night Drive Loop,Neon Echo,synthwave,moody,0.75,110,0.49,0.73,0.22
-9,Focus Flow,LoRoom,lofi,focused,0.40,80,0.59,0.60,0.78
-10,Rooftop Lights,Indigo Parade,indie pop,happy,0.76,124,0.81,0.82,0.35
-11,Desert Wind Caravan,Saffron Trails,world,festive,0.68,104,0.74,0.71,0.33
-12,Iron Heartbeat,Static Forge,metal,aggressive,0.96,176,0.29,0.52,0.03
-13,Velvet Horizon,Blue Ember,blues,melancholic,0.46,84,0.38,0.57,0.67
-14,Moonlit Courtyard,Aria Solis,classical,calm,0.22,64,0.72,0.21,0.95
-15,Island Lanterns,Tide Mosaic,reggae,uplifted,0.61,92,0.83,0.79,0.48
-16,Neon Footwork,Circuit Samba,drum and bass,euphoric,0.94,172,0.76,0.86,0.06
-17,Open Road Anthem,Maple Run,country,nostalgic,0.55,98,0.69,0.64,0.58
-18,Tidepool Whispers,Harbor Thread,folk,reflective,0.33,76,0.63,0.49,0.88
+id,title,artist,genre,mood,energy,tempo_bpm,valence,danceability,acousticness,file
+1,Roar,Katy Perry,pop,uplifted,0.85,120,0.87,0.82,0.10,Katy_Perry_-_Roar.mp3
+2,Fight Song,Rachel Platten,pop,uplifted,0.80,140,0.83,0.65,0.12,Fight_Song_-_Rachel_Platten.mp3
+3,Dreamer,Ozzy Osbourne,rock,uplifted,0.75,118,0.79,0.60,0.08,Dreamer_-_Ozzy_Osbourne.mp3
+4,Get Up Stand Up,Bob Marley,reggae,uplifted,0.65,90,0.78,0.70,0.35,Get_Up_Stand_Up_-_Bob_Marley.mp3
+5,Thunder,Imagine Dragons,rock,uplifted,0.82,160,0.81,0.78,0.06,Imagine_Dragons_-_Thunder_Lyrics.mp3
+6,Happy,Pharrell Williams,pop,happy,0.90,160,0.96,0.88,0.08,Happy_-_Pharrell_Williams.mp3
+7,Neon Moon,DJ Noiz ft Brooks and Dunn,country,nostalgic,0.70,85,0.72,0.68,0.45,Neon_Moon_-_DJ_Noiz_Brooks_and_Dunn.mp3
+8,Shalala Lala,Vengaboys,pop,festive,0.88,138,0.91,0.86,0.05,Shalala_Lala_-_Vengaboys.mp3
+9,Born To Be Wild,Steppenwolf,rock,happy,0.85,137,0.85,0.72,0.04,Born_To_Be_Wild_-_Steppenwolf.mp3
+10,Let It Be,The Beatles,rock,reflective,0.30,76,0.48,0.33,0.72,Let_It_Be_-_The_Beatles.mp3
+11,Fix You,Coldplay,rock,reflective,0.25,138,0.42,0.28,0.80,Fix_You_-_Coldplay.mp3
+12,Don't Worry Be Happy,Bobby McFerrin,jazz,relaxed,0.55,98,0.79,0.65,0.62,Dont_Worry_Be_Happy_-_Bobby_McFerrin.mp3
+13,Blowin In The Wind,Bob Dylan,folk,reflective,0.35,80,0.52,0.40,0.85,Blowing_in_the_wind_-_Bob_Dylan.mp3
+14,Hotel California,Eagles,rock,moody,0.45,74,0.55,0.44,0.30,Hotel_California_-_Eagles_.mp3
+15,Stairway To Heaven,Led Zeppelin,rock,relaxed,0.40,82,0.50,0.35,0.55,Stairway_To_Heaven_-_Led_Zeppelin.mp3
+16,Top Of The World,Carpenters,pop,happy,0.72,152,0.86,0.70,0.22,Top_Of_The_World_-_Carpenters.mp3
+17,Price Tag,Jessie J,pop,uplifted,0.75,115,0.80,0.74,0.15,Price_Tag_-_Jessie_J.mp3
+18,Imagine,John Lennon,pop,calm,0.25,74,0.60,0.25,0.82,Imagine_-_John_Lennon.mp3
+19,Don't Stop Me Now,Queen,rock,festive,0.90,156,0.97,0.88,0.04,Dont_Stop_Me_Now_-_Queen.mp3
+20,Uptown Funk,Mark Ronson ft Bruno Mars,pop,festive,0.92,115,0.93,0.90,0.05,Mark_Ronson_-_Uptown_Funk_Official_Video_ft._Bruno_Mars.mp3
+21,Cant Stop The Feeling,Justin Timberlake,pop,festive,0.88,113,0.94,0.89,0.05,CANT_STOP_THE_FEELING_.mp3
+22,Young Wild And Free,Snoop Dogg and Wiz Khalifa,pop,chill,0.75,90,0.74,0.80,0.08,Snoop_Dogg__Wiz_Khalifa_-_Young_Wild_and_Free_ft._Bruno_Mars_Official_Video.mp3

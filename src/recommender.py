@@ -104,6 +104,7 @@ def load_songs(csv_path: str = "data/songs.csv") -> List[Dict]:
                     "valence": float(row["valence"]),
                     "danceability": float(row["danceability"]),
                     "acousticness": float(row["acousticness"]),
+                    "file": row.get("file", ""),
                 }
             )
     return songs

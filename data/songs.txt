@@ -1,0 +1,36 @@
+"""
+Songs for Fearful:
+Roar: Katy Perry
+Fight Song: Rachel Platten
+Dreamer: Ozzy Osbourne
+Get Up Stand Up: Bob Marley
+Believer: Imagine Dragons
+
+Songs for Happy:
+Happy: Pharrel Williams
+Neon Moon (Remix): DJ Noiz, Brooks & Dunn
+Shalala Lala: Vengaboys
+Born To Be Wild: Steppenwolf
+
+Songs for Sad:
+Let it be: The Beatles
+Fix You Lyrics: Coldplay
+Believer: Imagine Dragon
+Don't Worry Be Happy: Bobby McFerrins
+Blowin' In The Wind: Bob Dylan
+
+Songs for neutral:
+Hotel California: Eagles
+Stairway to Heaven: Led Zeppelin
+
+Songs for surprise:
+Top Of The World: The Carpenters
+Price Tag: Jessie J
+
+Songs for disgust:
+Let it be: The Beatles
+Imagine: John Lennon
+Don't Worry Be Happy: Bobby McFerrin
+Don't Stop Me Now: Queen
+Uptown Funk: Mark Ronson ft. Bruno Mars
+"""

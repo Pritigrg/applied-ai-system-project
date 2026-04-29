@@ -13,3 +13,8 @@ venv/
 
 # Pytest cache
 .pytest_cache/
+
+# Generated / runtime files
+*.wav
+*.log
+*.mp4
