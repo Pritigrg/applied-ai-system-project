@@ -1,165 +1,115 @@
-# 🎧 Model Card: Music Recommender Simulation
-
-## 1. Model Name  
-
-Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
-
-VibeMatch Classroom Recommender v1.
+# Model Card: EmotionLift — Emotion-Based Music Recommender
 
 ---
 
-## 2. Intended Use  
+## 1. Model Name
 
-Describe what your recommender is designed to do and who it is for. 
-
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration  
-
-This recommender suggests songs from a small class dataset.
-It matches user taste to song features.
-It assumes users know their genre, mood, and energy preference.
-This is for classroom exploration, not real production use.
+**EmotionLift v2** — a voice-driven music recommendation system that detects emotion from speech and recommends songs matched to how the user feels.
 
 ---
 
-## 3. How the Model Works  
+## 2. Intended Use
 
-Explain your scoring approach in simple language.  
+EmotionLift is designed to recommend music based on how a user is feeling, detected automatically from their voice. It is intended for:
 
-Prompts:  
+- Users who want music matched to their current emotional state without filling in a form
+- How speech recognition and emotion classification can be combined with a rule-based recommender
+- Demonstrating how two specialized AI models can be composed into a transparent, auditable pipeline
 
-- What features of each song are used (genre, energy, mood, etc.)  
-- What user preferences are considered  
-- How does the model turn those into a score  
-- What changes did you make from the starter logic  
-
-Avoid code here. Pretend you are explaining the idea to a friend who does not program.
-
-Each song has genre, mood, energy, and acousticness.
-The user profile has favorite genre, favorite mood, target energy, and acoustic preference.
-The model adds points for genre and mood matches.
-It adds more points when song energy is close to target energy.
-It adds a small bonus if acoustic preference aligns.
-Then songs are sorted by score and top songs are returned.
-
-I changed the starter scoring.
-Genre weight is lower now.
-Energy weight is higher now.
-So energy affects the final ranking more.
+The system assumes the user speaks in English. It is for educational exploration, not clinical therapy.
 
 ---
 
-## 4. Data  
+## 3. How the Model Works
 
-Describe the dataset the model uses.  
+The system is a four-stage pipeline:
 
-Prompts:  
+**Stage 1 — Speech to Text (`openai/whisper-base`)**
+The user speaks into their browser microphone. Whisper converts the audio to a plain-text sentence. It handles casual speech, background noise, and varied accents.
 
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
+**Stage 2 — Emotion Classification (`j-hartmann/emotion-english-distilroberta-base`)**
+The transcribed sentence is passed to an emotion classifier — a DistilRoBERTa model fine-tuned on six emotion-labelled datasets. It assigns one of seven labels: `anger`, `disgust`, `fear`, `joy`, `neutral`, `sadness`, `surprise`, and returns a confidence score (0–1).
 
-The catalog has 18 songs.
-It includes lofi, pop, rock, jazz, classical, reggae, and other genres.
-It includes moods like chill, happy, intense, reflective, and calm.
-I did not add or remove songs.
-Some music tastes are still missing because the dataset is small.
-Many genres appear only once.
+**Stage 3 — Emotion-to-Preference Mapping (`EMOTION_TO_PREFS` in `therapy.py`)**
+Each emotion label maps to a fixed set of music preferences encoded in a lookup table. The logic is: calm down negative states (e.g. anger → lofi/chill, sadness → classical/reflective) and match positive ones (joy → pop/happy). This table is fully readable in `src/therapy.py`.
 
----
+**Stage 4 — Rule-Based Recommender (`src/recommender.py`)**
+Each song in the 22-song catalog is scored using four weighted features:
+- Genre match: +1.0
+- Mood match: +1.0
+- Energy closeness: up to +4.0
+- Acoustic alignment: +0.5 (max score: 6.5)
 
-## 5. Strengths  
-
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
-
-The model works well for clear user profiles.
-It performs well for High-Energy Pop and Chill Lofi profiles.
-Energy and mood matching often feel correct.
-The results are easy to explain because the score is transparent.
+Songs are ranked by score and the top 5 are returned with a plain-English explanation and a confidence percentage. Real MP3 files from `data/media/` play inline in the Streamlit UI.
 
 ---
 
-## 6. Limitations and Bias 
+## 4. Data
 
-Where the system struggles or behaves unfairly. 
+The song catalog (`data/songs.csv`) contains **22 songs** spanning genres including pop, rock, folk, jazz, reggae, country, and blues. Moods include happy, uplifted, reflective, festive, chill, nostalgic, calm, relaxed, and moody.
 
-Prompts:  
+Each song has seven numeric and text attributes: `genre`, `mood`, `energy` (0–1), `tempo_bpm`, `valence`, `danceability`, and `acousticness` (0–1).
 
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
-
-This recommender is simple and transparent, but it has important limits.
-It does not consider lyrics, artist history, or listening context.
-Some genres and moods are underrepresented because the dataset is small.
-Energy has high weight, so recommendations can become repetitive.
-Genre and mood need exact text matches, which can hurt users with uncommon labels.
-The acoustic rule uses a hard cutoff and misses nuance near the threshold.
+The catalog was expanded from 18 songs (v1) to 22 songs to improve coverage. Notable gaps remain: there are no classical songs despite `sadness` mapping to classical preferences, and several genres (jazz, reggae, country) have only one representative song.
 
 ---
 
-## 7. Evaluation  
-How you checked whether the recommender behaved as expected.
+## 5. Strengths
 
-Prompts:
-
-Which user profiles you tested
-What you looked for in the recommendations
-What surprised you
-Any simple tests or comparisons you ran
-No need for numeric metrics unless you created some.
-
-I tested High-Energy Pop, Chill Lofi, and Deep Intense Rock profiles.
-I checked whether the top songs matched each profile's vibe.
-I also checked if the explanation text matched scoring behavior.
-I compared profile outputs to see overlap and differences.
-The biggest surprise was how strongly energy drives ranking after the weight change.
-I also used unit tests for ranking order and non-empty explanations.
+- **Transparent scoring**: every recommendation shows exactly which features contributed and by how much — no black box
+- **Graceful degradation**: an unmatched genre lowers confidence (to ~62%) without crashing
+- **Two-layer confidence**: the UI shows both the emotion classifier's confidence (e.g. `fear · 87%`) and the recommender's match percentage per song
+- **Natural input**: speaking a sentence gives the emotion classifier far richer signal than a single keyword or dropdown
+- **Fully local**: no API key required after a one-time model download
 
 ---
 
-## 8. Future Work  
+## 6. Limitations and Bias
 
-Ideas for how you would improve the model next.  
+**Energy dominates.** Energy carries weight 4.0 out of 6.5 (62%). A song with the right energy but the wrong genre almost always outranks a genre-perfect song with slightly different energy.
 
-Prompts:  
+**Small catalog.** With 22 songs, niche genre preferences (e.g. "classical" for sadness) often go unmet. The system silently picks the next best match with lower confidence.
 
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
+**Emotion classifier trained on written text.** The model was fine-tuned on formal written datasets, not transcribed speech. Short or vague phrases ("I dunno, meh") consistently fall through to `neutral`. Accented or non-standard English may be misclassified.
 
-I would add more songs to improve coverage.
-I would add soft matching for similar genres and moods.
-I would include more features like tempo, danceability, and valence.
-I would improve diversity so top results are less repetitive.
-I would make explanations even clearer and more personal.
+**Whisper errors cascade.** A transcription error feeds bad input to the emotion classifier, shifting the entire recommendation with no recovery path.
+
+**Seven emotion buckets is coarse.** Human emotion is more nuanced than seven fixed categories. "Nostalgic but content" gets flattened to whichever single label scores highest.
+
+**Classroom scope.** This is a classroom exploration project, not a clinical or production system. It makes no medical claims and has not been validated beyond manual testing.
 
 ---
 
-## 9. Personal Reflection  
+## 7. Evaluation
 
-A few sentences about your experience.  
+**Automated tests:** 11 tests pass in 0.25 seconds (`python -m pytest tests/ -v`). Tests cover the scoring engine, ranking order, confidence percentage calculation, vibe summarization, and graceful degradation for unknown genres. All model and audio dependencies are mocked.
 
-Prompts:  
+**Confidence scoring:** matched emotion profiles (e.g. joy → pop/happy) produce top scores of 6.18/6.5 (95% confidence). Unmatched genre preferences (sadness → classical, but no classical songs in catalog) drop to ~4.92/6.5 (62%).
 
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
+**Logging:** `src/agent.py` writes timestamped session logs capturing genre, mood, energy, top recommendation, and confidence on every run.
 
-I learned that small weight changes can shift recommendations a lot.
-I learned that transparent scoring makes debugging easier.
-I was surprised by how quickly energy can dominate results.
-This project made me think more about fairness and diversity in real apps.
+**Human evaluation:** after each session, the listener checks whether the detected emotion label matches what they said, and whether the top songs feel like a good match for that emotion.
+
+**Gap:** `src/therapy.py` and `src/voice_input.py` have no unit tests yet — these are the next tests to write.
+
+---
+
+## 8. Future Work
+
+- Add unit tests for `therapy.py` — mock the HuggingFace pipeline and assert each emotion label maps to the correct `user_prefs` dict
+- Expand the catalog to include classical songs so sadness recommendations match the genre target
+- Add soft matching for near-miss genres and moods (e.g. "lo-fi" matches "lofi")
+- Replace the hard acoustic cutoff (0.5) with a continuous score
+- Add image-based emotion input (detect emotion from a photo) — the recommender and mapping layer would need no changes
+- A/B test voice input vs. a keyword form to measure whether emotion detection actually improves recommendation quality
+
+---
+
+## 9. AI Collaboration
+
+I used Claude Code throughout the project — for designing the pipeline architecture, wiring together Whisper and the emotion classifier, building the Streamlit UI, writing tests, and debugging HuggingFace pipeline output shape issues in `therapy.py`.
+
+*Helpful suggestion:* Based on my requirements, Claude suggested good models for transcribing speech (`openai/whisper-base`) and for emotion recognition (`j-hartmann/emotion-english-distilroberta-base`), explaining the trade-offs between model size and accuracy for a local, no-API-key setup.
+
+*Flawed suggestion:* An early design used a cloud LLM (Claude API) to parse free-text mood input via a tool-calling loop. That approach required an API key, making the project not reproducible without a paid account. I replaced it with local Whisper + local HuggingFace emotion classifier — no API key needed and a cleaner fit for the assignment's specialized model requirement.
+
